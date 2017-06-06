@@ -43,12 +43,11 @@ public class TweetMainHashtagCount {
 
         String[] hashtags = hashtag.split("#");
         usedTopics = new String[200];
-        usedHashtags = new String[200];
 
         //Set the hashtag as key and all the values of this one
         for (int i = 0;  i < hashtags.length; i++)
         {
-
+          usedHashtags = new String[200];
           String keyHashtag = hashtags[i].toLowerCase();
           if (Arrays.asList(topics).contains(keyHashtag) && !Arrays.asList(usedTopics).contains(keyHashtag) && keyHashtag != "")
           {
