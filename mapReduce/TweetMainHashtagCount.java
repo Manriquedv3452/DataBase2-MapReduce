@@ -33,41 +33,43 @@ public class TweetMainHashtagCount {
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
       //StringTokenizer tweets = new StringTokenizer(value.toString());;
       String tweet = value.toString();
-      String hashtag = tweet.split("%")[2];
-      String tweetContent = tweet.split("%")[3];
-      char[] tweetChars = tweetContent.toCharArray();
+      if (tweet.split("%").length >= 4){
+        String hashtag = tweet.split("%")[2];
+        String tweetContent = tweet.split("%")[3];
+        char[] tweetChars = tweetContent.toCharArray();
 
 
-      //If hashtag is not a blank
-      if (hashtag.length() > 1){
+        //If hashtag is not a blank
+        if (hashtag.length() > 1){
 
-        String[] hashtags = hashtag.split("#");
-        usedTopics = new String[200];
+          String[] hashtags = hashtag.split("#");
+          usedTopics = new String[200];
 
-        //Set the hashtag as key and all the values of this one
-        for (int i = 0;  i < hashtags.length; i++)
-        {
-          usedHashtags = new String[200];
-          String keyHashtag = hashtags[i].toLowerCase();
-          if (Arrays.asList(topics).contains(keyHashtag) && !Arrays.asList(usedTopics).contains(keyHashtag) && keyHashtag != "")
+          //Set the hashtag as key and all the values of this one
+          for (int i = 0;  i < hashtags.length; i++)
           {
-            usedTopics[i] = keyHashtag;
-            tKey.set(new Text(keyHashtag));
-
-            //Get other hashtags
-            for(int j = 0; j < hashtags.length; j++)
+            usedHashtags = new String[200];
+            String keyHashtag = hashtags[i].toLowerCase();
+            if (Arrays.asList(topics).contains(keyHashtag) && !Arrays.asList(usedTopics).contains(keyHashtag) && keyHashtag != "")
             {
-              String otherHashtag = hashtags[j].toLowerCase();
-              if (!keyHashtag.equals(otherHashtag) && Arrays.asList(topics).contains(otherHashtag) && !Arrays.asList(usedHashtags).contains(otherHashtag) && otherHashtag != "")
-              {
-                usedHashtags[j] = otherHashtag;
-                context.write(tKey, new Text(otherHashtag));
+              usedTopics[i] = keyHashtag;
+              tKey.set(new Text(keyHashtag));
 
+              //Get other hashtags
+              for(int j = 0; j < hashtags.length; j++)
+              {
+                String otherHashtag = hashtags[j].toLowerCase();
+                if (!keyHashtag.equals(otherHashtag) && Arrays.asList(topics).contains(otherHashtag) && !Arrays.asList(usedHashtags).contains(otherHashtag) && otherHashtag != "")
+                {
+                  usedHashtags[j] = otherHashtag;
+                  context.write(tKey, new Text(otherHashtag));
+
+                }
               }
             }
           }
         }
-      }
+      }//END VALIDATION
     }
   }
 
@@ -109,7 +111,7 @@ public class TweetMainHashtagCount {
 
   public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
-    //conf.set("mapred.textoutputformat.separator", ",");
+    conf.set("mapred.textoutputformat.separator", "%");
     Job job = Job.getInstance(conf, "otherHashtagCount");
     job.setJarByClass(TweetMainHashtagCount.class);
     job.setMapperClass(TweetMapper.class);

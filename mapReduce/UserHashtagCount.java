@@ -24,22 +24,23 @@ public class UserHashtagCount {
       String tweetUser = "";
       String tweetContent = "";
       String tweet = value.toString();
-
-      String hashtag = tweet.split("%")[2];
-      if (hashtag.length() > 1){
-        String[] hashtags = hashtag.split("#");
-        tweetUser = tweet.split("%")[0];
-        for (int i = 0;  i < hashtags.length; i++)
-        {
-          //System.out.println(hashtags[i]);
-          if (Arrays.asList(topics).contains(hashtags[i].toLowerCase()))
+      if (tweet.split("%").length >= 4){
+        String hashtag = tweet.split("%")[2];
+        if (hashtag.length() > 1){
+          String[] hashtags = hashtag.split("#");
+          tweetUser = tweet.split("%")[0];
+          for (int i = 0;  i < hashtags.length; i++)
           {
+            //System.out.println(hashtags[i]);
+            if (Arrays.asList(topics).contains(hashtags[i].toLowerCase()))
+            {
 
-            tKey.set(new Text(hashtags[i].toLowerCase() + "%" + tweetUser));
-            context.write(tKey, tValue);
+              tKey.set(new Text(hashtags[i].toLowerCase() + "%" + tweetUser));
+              context.write(tKey, tValue);
+            }
           }
         }
-      }
+      }//END VALIDATION
     }
   }
 

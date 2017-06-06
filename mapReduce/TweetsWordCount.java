@@ -27,65 +27,68 @@ public class TweetsWordCount {
 
     private Text tKey = new Text();
     private String[] topics = {"2030now", "women", "costarica", "puravida", "makeamericagreatagain", "trumprussia", "recyclereuse", "traficocr"};
-    private String[] prepositions = {"and", "the","sobre","about","encima","above","través","across","después","after","contra","against","entre","among","alrededor","around","como","as","en","at","antes","before","detrás","behind","debajo","below","bajo","beneath","al","lado","beside","entre","between","allá","beyond","pero","but","por","by","abajo","down","durante","during","salvo","except","para","for","de","from","en","in","dentro","inside","en","into","cerca","near","próximo","next","de","of","en","on","opuesto","opposite","fuera","out","fuera","outside","encima","over","por","per","más","plus","alrededor","round","desde","since","que","than","través","through","hasta","till","a","to","hacia","toward","bajo","under","hasta","until","arriba","up","vía","via","con","with","dentro","within","sin","without"};
+    private String[] prepositions = {"las", "lo", "la","los", "un", "una", "and", "the","sobre","about","encima","above","través","across","después","after","contra","against","entre","among","alrededor","around","como","as","en","at","antes","before","detrás","behind","debajo","below","bajo","beneath","al","lado","beside","entre","between","allá","beyond","pero","but","por","by","abajo","down","durante","during","salvo","except","para","for","de","from","en","in","dentro","inside","en","into","cerca","near","próximo","next","de","of","en","on","opuesto","opposite","fuera","out","fuera","outside","encima","over","por","per","más","plus","alrededor","round","desde","since","que","than","través","through","hasta","till","a","to","hacia","toward","bajo","under","hasta","until","arriba","up","vía","via","con","with","dentro","within","sin","without"};
     private String[] usedTopics = new String[200];
     private String word = "";
 
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
       //StringTokenizer tweets = new StringTokenizer(value.toString());;
       String tweet = value.toString();
-      String hashtag = tweet.split("%")[2];
-      String tweetContent = tweet.split("%")[3];
-      char[] tweetChars = tweetContent.toCharArray();
+      if (tweet.split("%").length >= 4){
+	      String hashtag = tweet.split("%")[2];
+	      String tweetContent = tweet.split("%")[3];
+	      char[] tweetChars = tweetContent.toCharArray();
 
-      //Take all the hashtags off
-      for (int i = 0; i < tweetChars.length; i++)
-      {
-        if (tweetChars[i] == '#')
-        {
-          while (i < tweetChars.length && tweetChars[i] != ' ')
-          {
-            tweetChars[i] = 0;
-            i++;
-          }
-          if (i >= tweetChars.length)
-          {
-                break;
-          }
-        }
-      }
-      //Set the tweet content and clear all special characters
-      tweetContent = String.valueOf(tweetChars);
-      tweetContent = tweetContent.replaceAll("[^a-zA-Z\\s]", "").replaceAll("\\s+", " ");
+	      //Take all the hashtags off
+	      for (int i = 0; i < tweetChars.length; i++)
+	      {
+	        if (tweetChars[i] == '#')
+	        {
+	          while (i < tweetChars.length && tweetChars[i] != ' ')
+	          {
+	            tweetChars[i] = 0;
+	            i++;
+	          }
+	          if (i >= tweetChars.length)
+	          {
+	                break;
+	          }
+	        }
+	      }
+	      //Set the tweet content and clear all special characters
+	      tweetContent = String.valueOf(tweetChars);
+	      tweetContent = tweetContent.replaceAll("[^a-zA-Z\\s]", "").replaceAll("\\s+", " ");
 
-      //If hashtag is not a blank
-      if (hashtag.length() > 1){
+	      //If hashtag is not a blank
+	      if (hashtag.length() > 1){
 
-        String[] hashtags = hashtag.split("#");
-        usedTopics = new String[200];
+	        String[] hashtags = hashtag.split("#");
+	        usedTopics = new String[200];
 
-        //Set the hashtag as key and all the values of this one
-        for (int i = 0;  i < hashtags.length; i++)
-        {
-          if (Arrays.asList(topics).contains(hashtags[i].toLowerCase()) && !Arrays.asList(usedTopics).contains(hashtags[i].toLowerCase()))
-          {
-            usedTopics[i] = hashtags[i].toLowerCase();
-            StringTokenizer itr = new StringTokenizer(tweetContent);
+	        //Set the hashtag as key and all the values of this one
+	        for (int i = 0;  i < hashtags.length; i++)
+	        {
+	          if (Arrays.asList(topics).contains(hashtags[i].toLowerCase()) && !Arrays.asList(usedTopics).contains(hashtags[i].toLowerCase()))
+	          {
+	            usedTopics[i] = hashtags[i].toLowerCase();
+	            StringTokenizer itr = new StringTokenizer(tweetContent);
 
-            //Getting the word from the sentence
-            while (itr.hasMoreTokens()) {
+	            //Getting the word from the sentence
+	            while (itr.hasMoreTokens()) {
 
-              word = itr.nextToken();
-              word = word.replaceAll("\b", "");
-              if (!Arrays.asList(prepositions).contains(word.toLowerCase()) && word.length() > 2)
-              {
-                tKey.set(new Text(hashtags[i].toLowerCase()));
-                context.write(tKey, new Text(word.toLowerCase()));
-              }
-            }
-          }
-        }
-      }
+	              word = itr.nextToken();
+	              word = word.replaceAll("\b", "");
+	              if (!Arrays.asList(prepositions).contains(word.toLowerCase()) && word.length() > 2)
+	              {
+	                tKey.set(new Text(hashtags[i].toLowerCase()));
+	                context.write(tKey, new Text(word.toLowerCase()));
+	              }
+	            }
+	          }
+	        }
+		    
+	      }
+	  }//EN VALIDATION
     }
   }
 
@@ -95,6 +98,7 @@ public class TweetsWordCount {
       
       HashMap<String, Integer> words = new HashMap<String, Integer>();
 
+      //get each word and plus one if it is equal to another one
       for (Text val : values) {
 
           String word = val.toString();
@@ -108,6 +112,8 @@ public class TweetsWordCount {
             words.put(word,value);
           }
       }
+
+      //Sort the words with the value and get the TOP 10
       Map sortedMap = sortByValues(words);
       String top10 = "";
       int counter = 0;
@@ -126,7 +132,7 @@ public class TweetsWordCount {
 
   public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
-    //conf.set("mapred.textoutputformat.separator", ",");
+    conf.set("mapred.textoutputformat.separator", "%");
     Job job = Job.getInstance(conf, "hashtagWordCount");
     job.setJarByClass(TweetsWordCount.class);
     job.setMapperClass(TweetMapper.class);

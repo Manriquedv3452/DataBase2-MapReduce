@@ -26,24 +26,25 @@ public class TweetPerHashtagCount {
       String tweetContent = "";
       String tweet = value.toString();
 
-      
-      String  hashtag = tweet.split("%")[2];
-      
-      if (hashtag.length() > 1){
-        String[] hashtags = hashtag.split("#");
-        usedTopics = new String[200];
-        for (int i = 0;  i < hashtags.length; i++)
-        {
-          
-          if (Arrays.asList(topics).contains(hashtags[i].toLowerCase()) && !Arrays.asList(usedTopics).contains(hashtags[i].toLowerCase()))
+      if (tweet.split("%").length >= 4){
+        String  hashtag = tweet.split("%")[2];
+        
+        if (hashtag.length() > 1){
+          String[] hashtags = hashtag.split("#");
+          usedTopics = new String[200];
+          for (int i = 0;  i < hashtags.length; i++)
           {
-            usedTopics[i] = hashtags[i].toLowerCase();
             
-            tKey.set(hashtags[i].toLowerCase());
-            context.write(tKey, tValue);
+            if (Arrays.asList(topics).contains(hashtags[i].toLowerCase()) && !Arrays.asList(usedTopics).contains(hashtags[i].toLowerCase()))
+            {
+              usedTopics[i] = hashtags[i].toLowerCase();
+              
+              tKey.set(hashtags[i].toLowerCase());
+              context.write(tKey, tValue);
+            }
           }
         }
-      }
+      }//end validation
     }
   }
 
