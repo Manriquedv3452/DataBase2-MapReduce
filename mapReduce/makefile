@@ -1,23 +1,13 @@
-#MAP REDUCE 1
+#MAP REDUCE 1 y 2
 createMapreduce1:
-	javac -classpath $(shell hadoop classpath) -d 'mapReduce_classes/' 'UserHashtagCount.java' 
-	jar -cvf mapReduce1.jar -C mapReduce_classes/ . 
+	javac -classpath $(shell hadoop classpath) -d 'mapReduce_classes/' 'UserTweetHashtagCount.java' 
+	jar -cvf mapReduce1-2.jar -C mapReduce_classes/ . 
 	
 
 executeMapreduce1:
 	hadoop fs -rm -r /mapReduce/Output
-	hadoop jar 'mapReduce1.jar' UserHashtagCount /mapReduce/Input /mapReduce/Output
+	hadoop jar 'mapReduce1-2.jar' UserTweetHashtagCount /mapReduce/Input /mapReduce/Output
 	hadoop dfs -cat /mapReduce/Output/* > 'resultMapReduce1.txt'
-
-#MAP REDUCE 2
-createMapreduce2: 
-	javac -classpath $(shell hadoop classpath) -d 'mapReduce_classes/' 'TweetPerHashtagCount.java' 
-	jar -cvf mapReduce2.jar -C mapReduce_classes/ . 
-
-executeMapreduce2:
-	hadoop fs -rm -r /mapReduce/Output
-	hadoop jar 'mapReduce2.jar' TweetPerHashtagCount /mapReduce/Input /mapReduce/Output
-	hadoop dfs -cat /mapReduce/Output/* > 'resultMapReduce2.txt'
 
 
 #MAP REDUCE 3
@@ -63,4 +53,4 @@ executeMapreduce6:
 
 data:
 	
-	hadoop fs -put '/input_data/tweets.txt' /mapReduce/Input
+hadoop fs -put '/input_data/tweets.txt' /mapReduce/Input
