@@ -1,0 +1,6 @@
+costarica%puravida=138#traficocr=4#=1#
+makeamericagreatagain%trumprussia=11#women=5#=1#
+puravida%costarica=138#traficocr=3#=1#
+traficocr%costarica=4#puravida=3#=1#
+trumprussia%women=110#makeamericagreatagain=11#=1#
+women%trumprussia=110#makeamericagreatagain=5#=1#

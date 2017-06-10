@@ -1,0 +1,8 @@
+2030now=20,6
+costarica=2027,897
+makeamericagreatagain=4251,916
+puravida=897,594
+recyclereuse=1,1
+traficocr=205,42
+trumprussia=24630,8682
+women=17559,6393

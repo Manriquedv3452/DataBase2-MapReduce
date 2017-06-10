@@ -52,5 +52,4 @@ executeMapreduce6:
 	hadoop dfs -cat /mapReduce/Output/* > 'resultMapReduce6.txt'
 
 data:
-	
-hadoop fs -put '/input_data/tweets.txt' /mapReduce/Input
+	hadoop fs -put '/input_data/tweets.txt' /mapReduce/Input
