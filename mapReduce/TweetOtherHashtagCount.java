@@ -62,7 +62,9 @@ public class TweetOtherHashtagCount {
                 if (!Arrays.asList(topics).contains(otherHashtag) && !Arrays.asList(usedHashtags).contains(otherHashtag) && otherHashtag != "")
                 {
                   usedHashtags[j] = otherHashtag;
-                  context.write(tKey, new Text(otherHashtag));
+                  if (otherHashtag != ""){
+                  	context.write(tKey, new Text(otherHashtag));
+                  }
 
                 }
               }
@@ -96,13 +98,12 @@ public class TweetOtherHashtagCount {
       String top10 = "";
       int counter = 0;
       for (Object hashtag : sortedMap.keySet()) {
-          if (counter == 10) {
+          if (counter ++ == 11) {
               break;
           }
-          if (hashtag.toString().length() > 0){
+          if (hashtag.toString().length() > 1){
             top10 += hashtag.toString() + "=" + sortedMap.get(hashtag) + "#";
           }
-          counter++;
       }
 
       context.write(key, new Text(top10));
